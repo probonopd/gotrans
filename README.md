@@ -12,5 +12,7 @@ This tool is used **baidu translate api**.
 ## Usage
 
 `gotrans hello`
+
 `gotrans 'hello, world'`
+
 `gotrans -t jp 'hello, world'`
