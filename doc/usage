@@ -1,11 +1,12 @@
-USAGE: gotrans <flag> [words]
+USAGE:
+	gotrans <flag> [words]
 
-  FLAG:
-    -t: target language code. if don't given this flag, it will auto set to 'zh'. type <gotrans -h langcode> for more detial.
-    -h: help messages.
+FLAG:
+	-t	target language code, default to 'zh'.
+		type <gotrans -h langcode> for more detial.
+	-h	help messages.
 
-
-EXAMPLES: 
-  gotrans hello
-  gotrans 'hello, world'
-  gotrans -t jp 'hello, world'
+EXAMPLES:
+	gotrans hello
+	gotrans 'hello, world'
+	gotrans -t jp 'hello, world'
