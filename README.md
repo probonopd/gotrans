@@ -3,7 +3,7 @@
 Gotrans is a golang command line tool, which is used to translate words or
 sentences.
 
-This tool is used **baidu translate api**.
+This tool base on **baidu translate api**.
 
 ## Installation
 
