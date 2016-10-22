@@ -3,36 +3,23 @@ package baidu
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"encoding/json"
-	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"net/url"
 	"strconv"
+
+	"github.com/bitly/go-simplejson"
 )
 
-// APPID, KEY, BAIDUTRANS is request from baidu fanyi api
 const (
-	APPID      string = "20151113000005375"
-	KEY        string = "s7TBETv56ZaZjyYoS472"
-	BAIDUTRANS string = "http://api.fanyi.baidu.com/api/trans/vip/translate"
+	appid   string = "20151113000005375"
+	key     string = "s7TBETv56ZaZjyYoS472"
+	baseurl string = "http://api.fanyi.baidu.com/api/trans/vip/translate"
 )
-
-// TransResultJSON save the translate result
-type TransResultJSON struct {
-	From   string
-	To     string
-	Result []transResultObject `json:"trans_result"`
-}
-
-type transResultObject struct {
-	Src string
-	Dst string
-}
 
 func genarateSign(query string) (sign, salt string) {
 	salt = strconv.FormatInt(rand.Int63n(10000), 5)
-	sign = APPID + query + salt + KEY
+	sign = appid + query + salt + key
 
 	m := md5.New()
 	m.Write([]byte(sign))
@@ -41,10 +28,10 @@ func genarateSign(query string) (sign, salt string) {
 }
 
 // Translator translate words from one language to another.
-func Translator(query, from, to string) (result TransResultJSON, err error) {
+func Translator(query, from, to string) (result string, err error) {
 	si, sa := genarateSign(query)
 	q := url.QueryEscape(query)
-	transURL := BAIDUTRANS + "?appid=" + APPID + "&q=" + q + "&from=" + from +
+	transURL := baseurl + "?appid=" + appid + "&q=" + q + "&from=" + from +
 		"&to=" + to + "&salt=" + sa + "&sign=" + si
 
 	res, err := http.Get(transURL)
@@ -54,12 +41,8 @@ func Translator(query, from, to string) (result TransResultJSON, err error) {
 	defer res.Body.Close()
 
 	if res.StatusCode == 200 {
-		data, _ := ioutil.ReadAll(res.Body)
-
-		err = json.Unmarshal(data, &result)
-		if err != nil {
-			return
-		}
+		data, _ := simplejson.NewFromReader(res.Body)
+		result, _ = data.Get("trans_result").GetIndex(0).Get("dst").String()
 	}
 
 	return
