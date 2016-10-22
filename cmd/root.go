@@ -34,7 +34,9 @@ var RootCmd = &cobra.Command{
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	Run: func(cmd *cobra.Command, args []string) {
-		if toLang != "" {
+		if len(args) < 1 {
+			fmt.Println("source words not give.")
+		} else if toLang != "" {
 			result, err := baidu.Translator(args[:1][0], "auto", toLang)
 			if err != nil {
 				fmt.Println(err)
