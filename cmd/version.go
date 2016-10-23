@@ -18,10 +18,9 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
-var version string
+// var version string
 
 // versionCmd represents the version command
 var versionCmd = &cobra.Command{
@@ -29,8 +28,8 @@ var versionCmd = &cobra.Command{
 	Short: "Print the version number of gotrans",
 	Long:  `We are poor at version processing`,
 	Run: func(cmd *cobra.Command, args []string) {
-		version = viper.GetString("version")
-		fmt.Println(version)
+		// version = viper.GetString("version")
+		fmt.Println("0.0.1")
 	},
 }
 

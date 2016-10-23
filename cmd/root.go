@@ -21,7 +21,6 @@ import (
 
 	"github.com/skitta/gotrans/api/baidu"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var toLang string
@@ -44,21 +43,21 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
+	// cobra.OnInitialize(initConfig)
 
 	RootCmd.PersistentFlags().StringVarP(&toLang, "to", "t", "zh", "translate to")
 }
 
 // initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
+// func initConfig() {
+// 	viper.SetConfigName("config")
+// 	viper.SetConfigType("yaml")
+// 	viper.AddConfigPath(".")	// TODO: cross platform support
 
-	if err := viper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("Fatal error config file: %s \n", err))
-	}
-}
+// 	if err := viper.ReadInConfig(); err != nil {
+// 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
+// 	}
+// }
 
 func translate(cmd *cobra.Command, args []string) error {
 	result, err := baidu.Translator(strings.Join(args, " "), "auto", toLang)
