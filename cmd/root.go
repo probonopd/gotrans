@@ -17,13 +17,13 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/skitta/gotrans/api/baidu"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
 var toLang string
 
 // RootCmd represents the base command when called without any subcommands
@@ -31,22 +31,7 @@ var RootCmd = &cobra.Command{
 	Use:   "gotrans",
 	Short: "Comandline tool for translating",
 	Long:  `A simple translator using Baidu fanyi API`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) < 1 {
-			fmt.Println("source words not give.")
-		} else if toLang != "" {
-			result, err := baidu.Translator(args[:1][0], "auto", toLang)
-			if err != nil {
-				fmt.Println(err)
-				return
-			}
-			fmt.Println(result)
-		} else {
-			fmt.Println("target language not set.")
-		}
-	},
+	RunE:  translate,
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.
@@ -61,22 +46,25 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file(default is config.yaml)")
 	RootCmd.PersistentFlags().StringVarP(&toLang, "to", "t", "zh", "translate to")
 }
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
-	if cfgFile != "" { // enable ability to specify config file via flag
-		viper.SetConfigFile(cfgFile)
-	}
+	viper.SetConfigName("config")
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
 
-	viper.SetConfigName("config") // name of config file (without extension)
-	viper.AddConfigPath("./")     // adding home directory as first search path
-	viper.AutomaticEnv()          // read in environment variables that match
-
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
+	if err := viper.ReadInConfig(); err != nil {
+		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
+}
+
+func translate(cmd *cobra.Command, args []string) error {
+	result, err := baidu.Translator(strings.Join(args, " "), "auto", toLang)
+	if err != nil {
+		return err
+	}
+	fmt.Println(result)
+	return nil
 }
