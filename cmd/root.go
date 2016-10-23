@@ -45,6 +45,7 @@ func Execute() {
 func init() {
 	// cobra.OnInitialize(initConfig)
 
+	// RootCmd.PersistentFlags().StringVarP(&toLang, "to", "t", "zh", "translate to")
 	RootCmd.Flags().StringVarP(&toLang, "to", "t", "zh", "translate to")
 }
 
